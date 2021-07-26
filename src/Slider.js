@@ -30,14 +30,14 @@ const Slider = ({ padding = 0,  }) => {
 
   const maxScroll = - (getScrollWidth() - getContainerWidth());
 
-  const isLast = (maxScroll) => Math.abs(scrollRef.current - maxScroll + padding) < itemWidth.current;
+  const isLast = (maxScroll) => Math.abs(scrollRef.current - maxScroll + padding) <= 0;
   console.log("itemWidth.current", itemWidth.current);
   console.log('isLast', isLast(maxScroll));
   const currentIndex = (ref = scrollRef.current) => Math.round(Math.abs(ref - padding) / (getScrollWidth() / items.length));
   console.log('currentIndex', currentIndex())
 
   useEffect(() => {
-    const container = containerRef.current;
+    const container = innerRef.current;
     const observer = new ResizeObserver((item) => {
       itemWidth.current = item[0].contentRect.width;
       currentIndexRef.current = currentIndex();
@@ -86,17 +86,18 @@ const Slider = ({ padding = 0,  }) => {
   useEffect(() => {
       if (index !== undefined && index !== currentIndexRef.current) {
         const maxScroll = -(getScrollWidth() - getContainerWidth());
-        console.log("maxScroll", maxScroll);
         scrollRef.current = Math.max(-(getScrollWidth() / items.length) * index + (index > 0 ? padding : 0),
-          maxScroll
+        maxScroll
         );
-        console.log("scrollRef.current", scrollRef.current);
+        
         currentIndexRef.current = index;
         if (onIndexChange) {
           onIndexChange(currentIndexRef.current, isLast(maxScroll));
         }
+        const scrollerPos = (scrollRef.current / maxScroll) * (getContainerWidth() - getScrollerWidth());
         api.start({
-          x: scrollRef.current
+          x: scrollRef.current,
+          scrollerPos,
         });
       }
     }, [index, api, scrollRef, padding]);
@@ -145,6 +146,7 @@ const Slider = ({ padding = 0,  }) => {
       
       scrollRef.current = rubberbandIfOutOfBounds(scrollRef.current, maxScroll, 0,0.5)
       const scrollerPos = (scrollRef.current / maxScroll) * (getContainerWidth() - getScrollerWidth());
+      
       api.start({ x: scrollRef.current, scrollerPos })
     },
     // onWheel: ({ wheeling, delta: [dx] }) => {
@@ -219,6 +221,9 @@ const Slider = ({ padding = 0,  }) => {
 const SlideItem = ({ index }) => (
   <a href={`#item-${index}`} draggable="false" className="slide-content">
     <img src="https://source.unsplash.com/200x100/?nature,water" draggable="false" />
+    <div className="number">
+    { index }
+    </div>
     <div className="details">
       <div className="logo-wrapper">
         <img src="https://source.unsplash.com/100x100/?nature" draggable="false" className="logo"/>

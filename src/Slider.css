@@ -2,6 +2,7 @@
   display: flex;
   flex-wrap: nowrap;
   touch-action: pan-x;
+  gap: 1rem;
 }
 
 .slider-container-inner * {
@@ -17,7 +18,7 @@
 .slide {
   color: white;
   flex-shrink: 0;
-  margin-right: 0.5rem;
+  /* margin-right: 0.5rem; */
 }
 
 .logo-wrapper {
@@ -25,7 +26,7 @@
   overflow:hidden;
   border-radius: 100%;
   flex-shrink: 0;
-  height: 25px
+  height: 25px;
 }
 
 .logo {
@@ -39,6 +40,7 @@
   color: black;
   display: block;
   width: 200px;
+  position: relative;
 }
 
 .slide-content .details {
@@ -68,4 +70,17 @@
   padding: 5px;
   width: 100px;
   margin: 10px;
+}
+
+.number {
+  position: absolute;
+  display: flex;
+  text-align: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-weight: bold;
+  font-size: 30px;
+  color: white;
 }
