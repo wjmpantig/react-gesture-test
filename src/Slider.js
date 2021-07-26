@@ -31,10 +31,7 @@ const Slider = ({ padding = 0,  }) => {
   const maxScroll = - (getScrollWidth() - getContainerWidth());
 
   const isLast = (maxScroll) => Math.abs(scrollRef.current - maxScroll + padding) <= 0;
-  console.log("itemWidth.current", itemWidth.current);
-  console.log('isLast', isLast(maxScroll));
   const currentIndex = (ref = scrollRef.current) => Math.round(Math.abs(ref - padding) / (getScrollWidth() / items.length));
-  console.log('currentIndex', currentIndex())
 
   useEffect(() => {
     const container = innerRef.current;
@@ -123,13 +120,11 @@ const Slider = ({ padding = 0,  }) => {
       const isRightEdgeBounce = scrollRef.current < maxScroll;
 
       const maxSlides = Math.ceil(getScrollWidth() / getContainerWidth());
-      const minOffset = itemWidth.current / 4;
-      const shouldSlide = Math.abs(mx) > minOffset;
-      const thisIndex = currentIndex(scrollRef.current + dx * minOffset);
+      const thisIndex = currentIndex(scrollRef.current + dx);
       const scrollNexSnap = Math.max(-(getScrollWidth() / items.length) * thisIndex + (thisIndex > 0 ? padding : 0), maxScroll);
 
 
-      if (!down && !shouldSlide) {
+      if (!down) {
         scrollRef.current = scrollNexSnap;
       }
       
@@ -137,11 +132,13 @@ const Slider = ({ padding = 0,  }) => {
         scrollRef.current = 0;
         currentIndexRef.current = 0;
       }
+      
       if (!down && isRightEdgeBounce) {
         currentIndexRef.current = Math.min(thisIndex, maxSlides - 1);
         scrollRef.current = currentIndexRef.current === 0 ? 0 : maxScroll;
       }
-      if (!down && !isLeftEdgeBounce && !isRightEdgeBounce && shouldSlide) {
+
+      if (!down && !isLeftEdgeBounce && !isRightEdgeBounce) {
         scrollRef.current = scrollNexSnap;
         currentIndexRef.current = thisIndex;
       }
@@ -162,14 +159,8 @@ const Slider = ({ padding = 0,  }) => {
       const isRightEdgeBounce = scrollRef.current < maxScroll;
 
       const maxSlides = Math.ceil(getScrollWidth() / getContainerWidth());
-      const minOffset = itemWidth.current / 4;
-      // const shouldSlide = Math.abs(mx) > minOffset;
-      const thisIndex = currentIndex(scrollRef.current - dx * minOffset);
+      const thisIndex = currentIndex(scrollRef.current - dx);
       const scrollNexSnap = Math.max(-(getScrollWidth() / items.length) * thisIndex + (thisIndex > 0 ? padding : 0), maxScroll);
-
-      // if (!shouldSlide) {
-      //   scrollRef.current = scrollNexSnap;
-      // }
 
       if (!wheeling && isLeftEdgeBounce) {
         scrollRef.current = 0;
