@@ -163,7 +163,7 @@ const Slider = ({ padding = 0,  }) => {
 
       const maxSlides = Math.ceil(getScrollWidth() / getContainerWidth());
       const minOffset = itemWidth.current / 4;
-      // const shouldSlide = Math.abs(dx) > minOffset;
+      // const shouldSlide = Math.abs(mx) > minOffset;
       const thisIndex = currentIndex(scrollRef.current - dx * minOffset);
       const scrollNexSnap = Math.max(-(getScrollWidth() / items.length) * thisIndex + (thisIndex > 0 ? padding : 0), maxScroll);
 
@@ -181,12 +181,12 @@ const Slider = ({ padding = 0,  }) => {
         scrollRef.current = currentIndexRef.current === 0 ? 0 : maxScroll;
       }
 
-      if (!isLeftEdgeBounce && !isRightEdgeBounce) {
+      if (!wheeling && !isLeftEdgeBounce && !isRightEdgeBounce) {
         scrollRef.current = scrollNexSnap;
         currentIndexRef.current = thisIndex;
       }
 
-      if (onIndexChange) {
+      if (onIndexChange && !wheeling) {
         onIndexChange(currentIndexRef.current, isLast(maxScroll));
       }
       
