@@ -1,7 +1,6 @@
 .slider-container-inner {
   display: flex;
   flex-wrap: nowrap;
-  /* overflow-x: scroll; */
   touch-action: pan-x;
 }
 
@@ -16,10 +15,7 @@
 }
 
 .slide {
-  /* width: 200px; */
-  /* background: blue; */
   color: white;
-  /* height: 100px; */
   flex-shrink: 0;
   margin-right: 0.5rem;
 }
@@ -65,4 +61,11 @@
   width: 200px;
   height: 100%;
   background: gray;
+}
+
+.left-arrow, .right-arrow {
+  border: 1px solid black;
+  padding: 5px;
+  width: 100px;
+  margin: 10px;
 }
