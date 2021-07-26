@@ -3,7 +3,7 @@ import { rubberbandIfOutOfBounds, useGesture } from '@use-gesture/react'
 import './Slider.css';
 import { useCallback, useRef, useState, useEffect } from "react";
 
-const items = [...new Array(20)];
+const items = [...new Array(12)];
 const Slider = ({ padding = 0,  }) => {
   const [index, setIndex] = useState(0);
   const [disabled, setDisabled] = useState(false);
@@ -141,30 +141,59 @@ const Slider = ({ padding = 0,  }) => {
         currentIndexRef.current = Math.min(thisIndex, maxSlides - 1);
         scrollRef.current = currentIndexRef.current === 0 ? 0 : maxScroll;
       }
+      if (!down && !isLeftEdgeBounce && !isRightEdgeBounce && shouldSlide) {
+        scrollRef.current = scrollNexSnap;
+        currentIndexRef.current = thisIndex;
+      }
 
-      
+      if (onIndexChange && !down) {
+        onIndexChange(currentIndexRef.current, isLast(maxScroll));
+      }
       
       scrollRef.current = rubberbandIfOutOfBounds(scrollRef.current, maxScroll, 0,0.5)
       const scrollerPos = (scrollRef.current / maxScroll) * (getContainerWidth() - getScrollerWidth());
       
       api.start({ x: scrollRef.current, scrollerPos })
     },
-    // onWheel: ({ wheeling, delta: [dx] }) => {
-    //   scrollRef.current += -dx;
-    //   const maxScroll = - (getScrollWidth() - getContainerWidth());
-    //   const isLeftEdgeBounce = scrollRef.current > 0;
-    //   const isRightEdgeBounce = scrollRef.current < maxScroll;
-    //   if (!wheeling && isLeftEdgeBounce) {
-    //     scrollRef.current = 0;
-    //   }
-    //   if (!wheeling && isRightEdgeBounce) {
-    //     scrollRef.current = maxScroll;
-    //   }
+    onWheel: ({ wheeling, delta: [dx] }) => {
+      scrollRef.current += -dx;
+      const maxScroll = - (getScrollWidth() - getContainerWidth());
+      const isLeftEdgeBounce = scrollRef.current > 0;
+      const isRightEdgeBounce = scrollRef.current < maxScroll;
+
+      const maxSlides = Math.ceil(getScrollWidth() / getContainerWidth());
+      const minOffset = itemWidth.current / 4;
+      // const shouldSlide = Math.abs(dx) > minOffset;
+      const thisIndex = currentIndex(scrollRef.current - dx * minOffset);
+      const scrollNexSnap = Math.max(-(getScrollWidth() / items.length) * thisIndex + (thisIndex > 0 ? padding : 0), maxScroll);
+
+      // if (!shouldSlide) {
+      //   scrollRef.current = scrollNexSnap;
+      // }
+
+      if (!wheeling && isLeftEdgeBounce) {
+        scrollRef.current = 0;
+        currentIndexRef.current = 0;
+      }
+
+      if (!wheeling && isRightEdgeBounce) {
+        currentIndexRef.current = Math.min(thisIndex, maxSlides - 1);
+        scrollRef.current = currentIndexRef.current === 0 ? 0 : maxScroll;
+      }
+
+      if (!isLeftEdgeBounce && !isRightEdgeBounce) {
+        scrollRef.current = scrollNexSnap;
+        currentIndexRef.current = thisIndex;
+      }
+
+      if (onIndexChange) {
+        onIndexChange(currentIndexRef.current, isLast(maxScroll));
+      }
       
-    //   scrollRef.current = rubberbandIfOutOfBounds(scrollRef.current, maxScroll, 0,0.8)
-    //   const scrollerPos = (scrollRef.current / maxScroll) * (getContainerWidth() - getScrollerWidth());
-    //   api.start({ x: scrollRef.current, scrollerPos })
-    // }
+      scrollRef.current = rubberbandIfOutOfBounds(scrollRef.current, maxScroll, 0,0.8)
+      const scrollerPos = (scrollRef.current / maxScroll) * (getContainerWidth() - getScrollerWidth());
+      api.start({ x: scrollRef.current, scrollerPos })
+    }
   },
   config)
 
